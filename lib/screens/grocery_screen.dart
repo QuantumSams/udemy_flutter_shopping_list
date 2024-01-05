@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../widget/grocery_single_list_item.dart';
+import '../data/dummy_items.dart';
 
 class GroceryScreen extends StatelessWidget {
   const GroceryScreen({super.key});
@@ -9,10 +11,11 @@ class GroceryScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Your Groceries"),
       ),
-      body: const Text(
-        "Sample",
-        // textAlign: TextAlign.center,
-      ),
+      body: ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          itemCount: groceryItems.length,
+          itemBuilder: (BuildContext context, int index) =>
+              GrocerySingleListItem(grosery: groceryItems[index])),
     );
   }
 }
