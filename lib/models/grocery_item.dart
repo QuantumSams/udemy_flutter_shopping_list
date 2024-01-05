@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import '../models/category.dart';
 
 class GroceryItem {
   const GroceryItem(
