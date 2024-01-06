@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../data/categories.dart';
 
 class NewItem extends StatefulWidget {
   const NewItem({super.key});
@@ -23,7 +24,47 @@ class _NewItemState extends State<NewItem> {
                 validator: (value) {
                   return 'Demo';
                 },
-              )
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        label: Text("Quantity"),
+                      ),
+                      initialValue: '1',
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                      child: DropdownButtonFormField(
+                    items: [
+                      for (final cat in categories.entries)
+                        DropdownMenuItem(
+                          value: cat.value,
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 16,
+                                height: 16,
+                                decoration:
+                                    BoxDecoration(color: cat.value.color),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(cat.value.title),
+                            ],
+                          ),
+                        )
+                    ],
+                    onChanged: (value) {},
+                  ))
+                ],
+              ),
             ],
           ),
         ),
