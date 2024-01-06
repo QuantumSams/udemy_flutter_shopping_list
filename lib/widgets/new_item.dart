@@ -36,9 +36,7 @@ class _NewItemState extends State<NewItem> {
                       initialValue: '1',
                     ),
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
+                  const SizedBox(width: 10),
                   Expanded(
                       child: DropdownButtonFormField(
                     items: [
@@ -48,14 +46,11 @@ class _NewItemState extends State<NewItem> {
                           child: Row(
                             children: [
                               Container(
-                                width: 16,
-                                height: 16,
-                                decoration:
-                                    BoxDecoration(color: cat.value.color),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
+                                  width: 16,
+                                  height: 16,
+                                  decoration:
+                                      BoxDecoration(color: cat.value.color)),
+                              const SizedBox(width: 10),
                               Text(cat.value.title),
                             ],
                           ),
@@ -63,6 +58,20 @@ class _NewItemState extends State<NewItem> {
                     ],
                     onChanged: (value) {},
                   ))
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(onPressed: () {}, child: const Text('Clear All')),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.background),
+                    child: const Text('Add'),
+                  )
                 ],
               ),
             ],
