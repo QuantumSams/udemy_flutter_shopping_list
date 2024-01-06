@@ -22,7 +22,13 @@ class _NewItemState extends State<NewItem> {
                 maxLength: 50,
                 decoration: const InputDecoration(label: Text("Name")),
                 validator: (value) {
-                  return 'Demo';
+                  if (value == null ||
+                      value.isEmpty ||
+                      value.trim().length <= 1 ||
+                      value.trim().length >= 50) {
+                    return 'Must be 1-50 characters';
+                  }
+                  return null;
                 },
               ),
               Row(
@@ -30,34 +36,45 @@ class _NewItemState extends State<NewItem> {
                 children: [
                   Expanded(
                     child: TextFormField(
+                      keyboardType: const TextInputType.numberWithOptions(),
                       decoration: const InputDecoration(
                         label: Text("Quantity"),
                       ),
                       initialValue: '1',
+                      validator: (value) {
+                        if (value == null ||
+                            value.isEmpty ||
+                            int.tryParse(value) == null ||
+                            int.tryParse(value)! <= 0) {
+                          return "Must be a positive number";
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                      child: DropdownButtonFormField(
-                    items: [
-                      for (final cat in categories.entries)
-                        DropdownMenuItem(
-                          value: cat.value,
-                          child: Row(
-                            children: [
-                              Container(
-                                  width: 16,
-                                  height: 16,
-                                  decoration:
-                                      BoxDecoration(color: cat.value.color)),
-                              const SizedBox(width: 10),
-                              Text(cat.value.title),
-                            ],
-                          ),
-                        )
-                    ],
-                    onChanged: (value) {},
-                  ))
+                    child: DropdownButtonFormField(
+                      items: [
+                        for (final cat in categories.entries)
+                          DropdownMenuItem(
+                            value: cat.value,
+                            child: Row(
+                              children: [
+                                Container(
+                                    width: 16,
+                                    height: 16,
+                                    decoration:
+                                        BoxDecoration(color: cat.value.color)),
+                                const SizedBox(width: 10),
+                                Text(cat.value.title),
+                              ],
+                            ),
+                          )
+                      ],
+                      onChanged: (value) {},
+                    ),
+                  )
                 ],
               ),
               const SizedBox(height: 10),
