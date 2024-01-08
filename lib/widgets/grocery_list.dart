@@ -36,6 +36,13 @@ class _GroceryListState extends State<GroceryList> {
       });
       return;
     }
+
+    if (respone.body == 'null') {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
     final List<GroceryItem> _groceryItemsTmp = [];
     final Map<String, dynamic> decodedJson = json.decode(respone.body);
 
@@ -78,7 +85,7 @@ class _GroceryListState extends State<GroceryList> {
       _groceryItems.remove(itemToRemove);
     });
     final url = Uri.https(
-        'demy-shopping-list-backend-default-rtdb.firebaseio.com',
+        'udemy-shopping-list-backend-default-rtdb.firebaseio.com',
         'shopping-list/${itemToRemove.id}.json');
     final respone = await http.delete(url);
 
@@ -86,8 +93,8 @@ class _GroceryListState extends State<GroceryList> {
       setState(() {
         _groceryItems.insert(index, itemToRemove);
         ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("'${itemToRemove.name}' can't be removed.")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("'${itemToRemove.name}' can't be removed.")));
       });
     }
   }
