@@ -1,7 +1,11 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:shopping_list/models/category.dart';
 import 'package:shopping_list/models/grocery_item.dart';
 import '../data/categories.dart';
+import 'package:http/http.dart' as http;
 
 class NewItem extends StatefulWidget {
   const NewItem({super.key});
@@ -16,16 +20,28 @@ class _NewItemState extends State<NewItem> {
   var _quantity = 1;
   var _initialCat = categories[Categories.values[0]];
 
-  void _validateThenSave() {
+  void _validateThenSave() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      Navigator.of(context).pop(GroceryItem(
-          id: DateTime.now().toString(),
-          name: _name,
-          quantity: _quantity,
-          category: _initialCat!));
+      final url = Uri.https(
+          'udemy-shopping-list-backend-default-rtdb.firebaseio.com',
+          'shopping-list.json');
+      final status = await http.post(url,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'name': _name,
+            'quantity': _quantity,
+            'category': _initialCat!.title
+          }));
+      log(status.statusCode.toString());
+
+      if (!context.mounted) {
+        return;
+      }
+      Navigator.of(context).pop();
     }
   }
+
   void _clearForm() {
     _formKey.currentState!.reset();
   }
