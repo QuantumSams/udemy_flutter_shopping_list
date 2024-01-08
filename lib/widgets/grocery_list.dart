@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shopping_list/data/categories.dart';
@@ -50,12 +49,17 @@ class _GroceryListState extends State<GroceryList> {
   }
 
   void _addNewItem() async {
-    await Navigator.of(context).push(
+    final newItem = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (ctx) => const NewItem(),
       ),
     );
-    _loadItems();
+    if (newItem == null) {
+      return;
+    }
+    setState(() {
+      _groceryItems.add(newItem);
+    });
   }
 
   void _removeItem(GroceryItem itemToRemove) {
@@ -106,7 +110,8 @@ class _GroceryListState extends State<GroceryList> {
       appBar: AppBar(
         title: const Text('Your Groceries'),
         actions: [
-          IconButton(onPressed: _addNewItem, icon: const Icon(Icons.add))
+          IconButton(onPressed: _loadItems, icon: const Icon(Icons.refresh)),
+          IconButton(onPressed: _addNewItem, icon: const Icon(Icons.add)),
         ],
       ),
       body: displayScreen,

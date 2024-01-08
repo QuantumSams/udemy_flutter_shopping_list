@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shopping_list/models/category.dart';
+import 'package:shopping_list/models/grocery_item.dart';
 import '../data/categories.dart';
 import 'package:http/http.dart' as http;
 
@@ -32,12 +33,17 @@ class _NewItemState extends State<NewItem> {
             'quantity': _quantity,
             'category': _initialCat!.title
           }));
-      log(status.statusCode.toString());
 
       if (!context.mounted) {
         return;
       }
-      Navigator.of(context).pop();
+
+      final decodedRes = json.decode(status.body);
+      Navigator.of(context).pop(GroceryItem(
+          id: decodedRes['name'],
+          name: _name,
+          quantity: _quantity,
+          category: _initialCat!));
     }
   }
 
