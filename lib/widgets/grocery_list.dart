@@ -17,6 +17,7 @@ class GroceryList extends StatefulWidget {
 class _GroceryListState extends State<GroceryList> {
   List<GroceryItem> _groceryItems = [];
   var _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -29,6 +30,12 @@ class _GroceryListState extends State<GroceryList> {
         'udemy-shopping-list-backend-default-rtdb.firebaseio.com',
         'shopping-list.json');
     final respone = await http.get(url);
+    if (respone.statusCode >= 400) {
+      setState(() {
+        _error = "An error has occured. Please try again.";
+      });
+      return;
+    }
     final List<GroceryItem> _groceryItemsTmp = [];
     final Map<String, dynamic> decodedJson = json.decode(respone.body);
 
@@ -64,10 +71,25 @@ class _GroceryListState extends State<GroceryList> {
     });
   }
 
-  void _removeItem(GroceryItem itemToRemove) {
+  void _removeItem(GroceryItem itemToRemove) async {
+    final index = _groceryItems.indexOf(itemToRemove);
+
     setState(() {
       _groceryItems.remove(itemToRemove);
     });
+    final url = Uri.https(
+        'demy-shopping-list-backend-default-rtdb.firebaseio.com',
+        'shopping-list/${itemToRemove.id}.json');
+    final respone = await http.delete(url);
+
+    if (respone.statusCode >= 400) {
+      setState(() {
+        _groceryItems.insert(index, itemToRemove);
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("'${itemToRemove.name}' can't be removed.")));
+      });
+    }
   }
 
   @override
@@ -109,6 +131,12 @@ class _GroceryListState extends State<GroceryList> {
             ),
           ),
         ),
+      );
+    }
+
+    if (_error != null) {
+      displayScreen = Center(
+        child: Text(_error!),
       );
     }
 
