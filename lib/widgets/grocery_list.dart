@@ -16,6 +16,7 @@ class GroceryList extends StatefulWidget {
 
 class _GroceryListState extends State<GroceryList> {
   List<GroceryItem> _groceryItems = [];
+  var _isLoading = true;
 
   @override
   void initState() {
@@ -44,6 +45,7 @@ class _GroceryListState extends State<GroceryList> {
       );
     }
     setState(() {
+      _isLoading = false;
       _groceryItems = _groceryItemsTmp;
     });
   }
@@ -82,6 +84,10 @@ class _GroceryListState extends State<GroceryList> {
             Text("Click 'Add' button to enter new grocery")
           ]),
     );
+
+    if (_isLoading) {
+      displayScreen = const Center(child: CircularProgressIndicator());
+    }
 
     if (_groceryItems.isNotEmpty) {
       displayScreen = ListView.builder(

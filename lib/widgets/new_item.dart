@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shopping_list/models/category.dart';
@@ -16,12 +15,16 @@ class NewItem extends StatefulWidget {
 
 class _NewItemState extends State<NewItem> {
   final _formKey = GlobalKey<FormState>();
+  var _isPosting = false;
   var _name = '';
   var _quantity = 1;
   var _initialCat = categories[Categories.values[0]];
 
   void _validateThenSave() async {
     if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isPosting = true;
+      });
       _formKey.currentState!.save();
       final url = Uri.https(
           'udemy-shopping-list-backend-default-rtdb.firebaseio.com',
@@ -138,13 +141,20 @@ class _NewItemState extends State<NewItem> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(onPressed: _clearForm, child: const Text('Clear')),
+                  TextButton(
+                      onPressed: _isPosting ? null : _clearForm,
+                      child: const Text('Clear')),
                   ElevatedButton(
-                    onPressed: _validateThenSave,
+                    onPressed: _isPosting ? null : _validateThenSave,
                     style: ElevatedButton.styleFrom(
                         backgroundColor:
                             Theme.of(context).colorScheme.background),
-                    child: const Text('Add'),
+                    child: _isPosting
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator())
+                        : const Text('Add'),
                   )
                 ],
               ),
