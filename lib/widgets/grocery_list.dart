@@ -29,39 +29,45 @@ class _GroceryListState extends State<GroceryList> {
     final url = Uri.https(
         'udemy-shopping-list-backend-default-rtdb.firebaseio.com',
         'shopping-list.json');
-    final respone = await http.get(url);
-    if (respone.statusCode >= 400) {
-      setState(() {
-        _error = "An error has occured. Please try again.";
-      });
-      return;
-    }
+    try {
+      final respone = await http.get(url);
+      if (respone.statusCode >= 400) {
+        setState(() {
+          _error = "An error has occured. Please try again.";
+        });
+        return;
+      }
 
-    if (respone.body == 'null') {
+      if (respone.body == 'null') {
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+      final List<GroceryItem> groceryItemsTmp = [];
+      final Map<String, dynamic> decodedJson = json.decode(respone.body);
+
+      for (final item in decodedJson.entries) {
+        final cat = categories.entries
+            .firstWhere((inCat) => inCat.value.title == item.value['category'])
+            .value;
+        groceryItemsTmp.add(
+          GroceryItem(
+              id: item.key,
+              name: item.value['name'],
+              quantity: item.value['quantity'],
+              category: cat),
+        );
+      }
       setState(() {
         _isLoading = false;
+        _groceryItems = groceryItemsTmp;
       });
-      return;
+    } catch (error) {
+      setState(() {
+        _error = 'Something went wrong!';
+      });
     }
-    final List<GroceryItem> _groceryItemsTmp = [];
-    final Map<String, dynamic> decodedJson = json.decode(respone.body);
-
-    for (final item in decodedJson.entries) {
-      final cat = categories.entries
-          .firstWhere((inCat) => inCat.value.title == item.value['category'])
-          .value;
-      _groceryItemsTmp.add(
-        GroceryItem(
-            id: item.key,
-            name: item.value['name'],
-            quantity: item.value['quantity'],
-            category: cat),
-      );
-    }
-    setState(() {
-      _isLoading = false;
-      _groceryItems = _groceryItemsTmp;
-    });
   }
 
   void _addNewItem() async {
